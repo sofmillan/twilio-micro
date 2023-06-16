@@ -6,9 +6,6 @@ public class MessageModel {
     private String phoneNumber;
     private String securityCode;
 
-    public MessageModel() {
-    }
-
     public String getPhoneNumber() {
         return phoneNumber;
     }
