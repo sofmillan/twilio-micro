@@ -9,8 +9,7 @@ import com.twiliopowerup.twiliopowerup.infraestructure.out.twilio.adapter.Twilio
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -74,5 +73,57 @@ class TwilioUseCaseTest {
         when(twilioPersistencePort.cancel(cancelModel.getPhoneNumber(), message)).thenReturn(true);
 
         assertTrue(twilioServicePort.cancel(cancelModel));
+    }
+
+    @Test
+    void SendMessage_Should_ThrowException_When_PhoneNumberIsNull(){
+        messageModel = new MessageModel();
+        messageModel.setPhoneNumber(null);
+        messageModel.setSecurityCode("a7c5b");
+
+        assertThrows(RuntimeException.class, ()-> twilioServicePort.sendMessage(messageModel));
+    }
+
+    @Test
+    void SendMessage_Should_ThrowException_When_SecurityCodeIsNull(){
+        messageModel = new MessageModel();
+        messageModel.setPhoneNumber("58956895");
+        messageModel.setSecurityCode(null);
+
+        assertThrows(RuntimeException.class, ()-> twilioServicePort.sendMessage(messageModel));
+    }
+
+    @Test
+    void SendMessage_Should_ThrowException_When_SecurityCodeIsEmpty(){
+        messageModel = new MessageModel();
+        messageModel.setPhoneNumber("+9856985");
+        messageModel.setSecurityCode("");
+
+        assertThrows(RuntimeException.class, ()-> twilioServicePort.sendMessage(messageModel));
+    }
+
+    @Test
+    void SendMessage_Should_ThrowException_When_PhoneNumberIsEmpty(){
+        messageModel = new MessageModel();
+        messageModel.setPhoneNumber("");
+        messageModel.setSecurityCode("ac5f34");
+
+        assertThrows(RuntimeException.class, ()-> twilioServicePort.sendMessage(messageModel));
+    }
+
+    @Test
+    void Cancel_Should_ThrowException_When_PhoneNumberIsEmpty(){
+        cancelModel = new CancelModel();
+        cancelModel.setPhoneNumber("");
+
+        assertThrows(RuntimeException.class, ()-> twilioServicePort.cancel(cancelModel));
+    }
+
+    @Test
+    void Cancel_Should_ThrowException_When_PhoneNumberIsNull(){
+        cancelModel = new CancelModel();
+        cancelModel.setPhoneNumber(null);
+
+        assertThrows(RuntimeException.class, ()-> twilioServicePort.cancel(cancelModel));
     }
 }

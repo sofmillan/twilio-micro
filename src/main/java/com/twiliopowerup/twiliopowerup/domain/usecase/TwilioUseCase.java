@@ -31,7 +31,7 @@ public class TwilioUseCase implements ITwilioServicePort {
 
     @Override
     public Boolean cancel(CancelModel cancelModel) {
-        //validateMessage(messageModel);
+        validateCancelModel(cancelModel);
         return twilioPersistencePort.cancel(cancelModel.getPhoneNumber(), cancel);
     }
 
@@ -44,6 +44,12 @@ public class TwilioUseCase implements ITwilioServicePort {
         if(messageModel.getSecurityCode() == null || messageModel.getSecurityCode().isEmpty()){
             log.error("Invalid security code");
             throw new RuntimeException("Invalid security code");
+        }
+    }
+
+    public void validateCancelModel (CancelModel cancelModel){
+        if(cancelModel.getPhoneNumber() == null || cancelModel.getPhoneNumber().isEmpty()){
+            throw new RuntimeException("Invalid phone number");
         }
     }
 }
