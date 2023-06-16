@@ -11,7 +11,6 @@ public class TwilioUseCase implements ITwilioServicePort {
 
     public final Logger log = LoggerFactory.getLogger(TwilioUseCase.class);
 
-
     private final String message = "Your order is ready. Get it with the following code: %s";
 
     private final String cancel = "You cannot cancel this order, it was already taken by one of our chefs";
