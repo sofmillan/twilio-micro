@@ -1,5 +1,6 @@
 plugins {
 	id 'java'
+	id 'jacoco'
 	id 'org.springframework.boot' version '2.7.8'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 	id "org.sonarqube" version "4.2.1.3168"
@@ -24,7 +25,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation group: "com.twilio.sdk", name: "twilio", version:"9.2.5"
-	//implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
 
 	compileOnly "org.projectlombok:lombok:${lombokVersion}"
 	annotationProcessor "org.projectlombok:lombok-mapstruct-binding:${lombokMapstructBindingVersion}"
@@ -50,4 +51,16 @@ sonarqube {
 		property "sonar.organization", "sofmillan"
 		property "sonar.host.url", "https://sonarcloud.io"
 	}
+}
+
+jacocoTestReport {
+	reports {
+		xml.enabled true
+	}
+	dependsOn test
+}
+test.finalizedBy jacocoTestReport
+
+tasks.named('sonar').configure {
+	dependsOn jacocoTestReport
 }
