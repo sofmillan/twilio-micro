@@ -1,0 +1,11 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: twilio-powerup
+
+twilio:
+  accountSID: ${ACCOUNT_SID}
+  accountToken: ${AUTH_TOKEN}
+  fromNumber: ${FROM_NUMBER}
