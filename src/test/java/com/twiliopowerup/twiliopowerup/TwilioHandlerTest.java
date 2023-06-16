@@ -1,5 +1,6 @@
 package com.twiliopowerup.twiliopowerup;
 
+import com.twiliopowerup.twiliopowerup.application.dto.request.CancelRequestDto;
 import com.twiliopowerup.twiliopowerup.application.dto.request.MessageRequestDto;
 import com.twiliopowerup.twiliopowerup.application.handler.ITwilioHandler;
 import com.twiliopowerup.twiliopowerup.application.handler.impl.TwilioHandler;
@@ -20,6 +21,7 @@ public class TwilioHandlerTest {
     ITwilioHandler twilioHandler;
     IMessageRequestMapper messageRequestMapper;
     MessageRequestDto messageRequestDto;
+    CancelRequestDto cancelRequestDto;
 
     @BeforeEach
     void setUp(){
@@ -30,21 +32,46 @@ public class TwilioHandlerTest {
     }
 
     @Test
-    void Should_ReturnFalse_When_ServiceReturnsFalse(){
+    void SendMessage_Should_ReturnFalse_When_ServiceReturnsFalse(){
         messageRequestDto = new MessageRequestDto();
         messageRequestDto.setPhoneNumber("+578458958");
         messageRequestDto.setSecurityCode("a4c3a2");
+
         when(servicePort.sendMessage(messageRequestMapper.toModel(messageRequestDto))).thenReturn(false);
+
         assertFalse(twilioHandler.sendMessage(messageRequestDto));
     }
 
     @Test
-    void Should_ReturnTrue_When_ServiceReturnsTrue(){
+    void SendMessage_Should_ReturnTrue_When_ServiceReturnsTrue_SendMessage(){
         messageRequestDto = new MessageRequestDto();
         messageRequestDto.setPhoneNumber("+578458958");
         messageRequestDto.setSecurityCode("a4c3a2");
+
         when(servicePort.sendMessage(messageRequestMapper.toModel(messageRequestDto))).thenReturn(true);
+
         assertTrue(twilioHandler.sendMessage(messageRequestDto));
+    }
+
+
+    @Test
+    void Cancel_Should_ReturnTrue_When_ServiceReturnsTrue(){
+        cancelRequestDto = new CancelRequestDto();
+        cancelRequestDto.setPhoneNumber("+584584645526");
+
+        when(servicePort.cancel(messageRequestMapper.toCancelModel(cancelRequestDto))).thenReturn(true);
+
+        assertTrue(twilioHandler.cancel(cancelRequestDto));
+    }
+
+    @Test
+    void Cancel_Should_ReturnFalse_When_ServiceReturnsFalse(){
+        cancelRequestDto = new CancelRequestDto();
+        cancelRequestDto.setPhoneNumber("+584584645526");
+
+        when(servicePort.cancel(messageRequestMapper.toCancelModel(cancelRequestDto))).thenReturn(false);
+
+        assertFalse(twilioHandler.cancel(cancelRequestDto));
     }
 
 
