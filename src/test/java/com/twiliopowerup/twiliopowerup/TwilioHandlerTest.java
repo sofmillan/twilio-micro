@@ -26,19 +26,23 @@ public class TwilioHandlerTest {
         servicePort = mock(TwilioUseCase.class);
         messageRequestMapper = mock(IMessageRequestMapper.class);
         twilioHandler = new TwilioHandler(servicePort, messageRequestMapper);
-        messageRequestDto = new MessageRequestDto();
-        messageRequestDto.setPhoneNumber("+578458958");
-        messageRequestDto.setSecurityCode("a4c3a2");
+
     }
 
     @Test
     void Should_ReturnFalse_When_ServiceReturnsFalse(){
+        messageRequestDto = new MessageRequestDto();
+        messageRequestDto.setPhoneNumber("+578458958");
+        messageRequestDto.setSecurityCode("a4c3a2");
         when(servicePort.sendMessage(messageRequestMapper.toModel(messageRequestDto))).thenReturn(false);
         assertFalse(twilioHandler.sendMessage(messageRequestDto));
     }
 
     @Test
     void Should_ReturnTrue_When_ServiceReturnsTrue(){
+        messageRequestDto = new MessageRequestDto();
+        messageRequestDto.setPhoneNumber("+578458958");
+        messageRequestDto.setSecurityCode("a4c3a2");
         when(servicePort.sendMessage(messageRequestMapper.toModel(messageRequestDto))).thenReturn(true);
         assertTrue(twilioHandler.sendMessage(messageRequestDto));
     }
