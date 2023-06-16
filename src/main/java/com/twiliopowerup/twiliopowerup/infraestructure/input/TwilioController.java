@@ -27,5 +27,4 @@ public class TwilioController {
         return ResponseEntity.ok(twilioHandler.cancel(cancelRequestDto));
     }
 
-    /*Controlador*/
 }
