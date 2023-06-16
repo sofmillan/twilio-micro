@@ -7,9 +7,9 @@ import com.twiliopowerup.twiliopowerup.domain.spi.ITwilioPersistencePort;
 
 public class TwilioUseCase implements ITwilioServicePort {
 
-    private final static String message = "Your order is ready. Get it with the following code: %s";
+    private static final  String MESSAGE = "Your order is ready. Get it with the following code: %s";
 
-    private final static String cancel = "You cannot cancel this order, it was already taken by one of our chefs";
+    private static final  String CANCEL = "You cannot cancel this order, it was already taken by one of our chefs";
     private final ITwilioPersistencePort twilioPersistencePort;
 
     public TwilioUseCase(ITwilioPersistencePort twilioPersistencePort) {
@@ -21,13 +21,13 @@ public class TwilioUseCase implements ITwilioServicePort {
         validateMessage(messageModel);
 
         return twilioPersistencePort.sendMessage(messageModel.getPhoneNumber(),
-                String.format(message, messageModel.getSecurityCode()));
+                String.format(MESSAGE, messageModel.getSecurityCode()));
     }
 
     @Override
     public Boolean cancel(CancelModel cancelModel) {
         validateCancelModel(cancelModel);
-        return twilioPersistencePort.cancel(cancelModel.getPhoneNumber(), cancel);
+        return twilioPersistencePort.cancel(cancelModel.getPhoneNumber(), CANCEL);
     }
 
     public void validateMessage (MessageModel messageModel){
