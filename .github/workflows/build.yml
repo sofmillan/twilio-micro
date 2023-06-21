@@ -13,6 +13,12 @@ jobs:
       ACCOUNT_SID: ${{ secrets.ACCOUNT_SID }}
       AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
       FROM_NUMBER: ${{ secrets.FROM_NUMBER }}
+      AWS_REGION: 'us-east-2'
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_ECR_REPO_NAME: 'twilio'
+      AWS_ECR_REPO_LINK: '378462941125.dkr.ecr.us-east-2.amazonaws.com/twilio'
+      AWS_ECR_REPO_PATH: '378462941125.dkr.ecr.us-east-2.amazonaws.com'
     steps:
       - uses: actions/checkout@v3
         with:
@@ -53,3 +59,25 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew build sonarqube --info
+  deploy-ecr:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Configure AWS Credentials
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+      - name: Build and push Docker image to ECR
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Build and push Docker image to ECR
+        run: |
+          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{env.AWS_ECR_REPO_PATH}}
+          docker build -t ${{env.AWS_ECR_REPO_NAME}} .
+          docker tag ${{env.AWS_ECR_REPO_NAME}}:latest ${{env.AWS_ECR_REPO_LINK}}:latest
+          docker push ${{env.AWS_ECR_REPO_LINK}}:latest    
+
