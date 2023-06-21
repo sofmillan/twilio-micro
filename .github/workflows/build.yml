@@ -80,7 +80,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
       - name: Build and push Docker image to ECR
         run: |
-          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{env.AWS_ECR_REPO_PATH}}
+          aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin ${{env.AWS_ECR_REPO_PATH}}
           docker build -t ${{env.AWS_ECR_REPO_NAME}} .
           docker tag ${{env.AWS_ECR_REPO_NAME}}:latest ${{env.AWS_ECR_REPO_LINK}}:latest
           docker push ${{env.AWS_ECR_REPO_LINK}}:latest    
