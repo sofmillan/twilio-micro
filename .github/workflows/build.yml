@@ -61,6 +61,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew build sonarqube --info
+      - name: create .jar and install
+        run: ./gradlew bootJar
 
   deploy-ecr:
     needs: build

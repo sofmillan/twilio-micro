@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TwilioUseCase.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">twilio-powerup</a> &gt; <a href="index.source.html" class="el_package">com.twiliopowerup.twiliopowerup.domain.usecase</a> &gt; <span class="el_source">TwilioUseCase.java</span></div><h1>TwilioUseCase.java</h1><pre class="source lang-java linenums">package com.twiliopowerup.twiliopowerup.domain.usecase;
+
+import com.twiliopowerup.twiliopowerup.domain.api.ITwilioServicePort;
+import com.twiliopowerup.twiliopowerup.domain.model.CancelModel;
+import com.twiliopowerup.twiliopowerup.domain.model.MessageModel;
+import com.twiliopowerup.twiliopowerup.domain.spi.ITwilioPersistencePort;
+
+public class TwilioUseCase implements ITwilioServicePort {
+
+    private final static String message = &quot;Your order is ready. Get it with the following code: %s&quot;;
+
+    private final static String cancel = &quot;You cannot cancel this order, it was already taken by one of our chefs&quot;;
+    private final ITwilioPersistencePort twilioPersistencePort;
+
+<span class="nc" id="L15">    public TwilioUseCase(ITwilioPersistencePort twilioPersistencePort) {</span>
+<span class="nc" id="L16">        this.twilioPersistencePort = twilioPersistencePort;</span>
+<span class="nc" id="L17">    }</span>
+
+    @Override
+    public Boolean sendMessage(MessageModel messageModel) {
+<span class="nc" id="L21">        validateMessage(messageModel);</span>
+
+<span class="nc" id="L23">        return twilioPersistencePort.sendMessage(messageModel.getPhoneNumber(),</span>
+<span class="nc" id="L24">                String.format(message, messageModel.getSecurityCode()));</span>
+    }
+
+    @Override
+    public Boolean cancel(CancelModel cancelModel) {
+<span class="nc" id="L29">        validateCancelModel(cancelModel);</span>
+<span class="nc" id="L30">        return twilioPersistencePort.cancel(cancelModel.getPhoneNumber(), cancel);</span>
+    }
+
+    public void validateMessage (MessageModel messageModel){
+<span class="nc bnc" id="L34" title="All 4 branches missed.">        if(messageModel.getPhoneNumber() == null || messageModel.getPhoneNumber().isEmpty()){</span>
+<span class="nc" id="L35">            throw new RuntimeException(&quot;Invalid phone number&quot;);</span>
+        }
+
+<span class="nc bnc" id="L38" title="All 4 branches missed.">        if(messageModel.getSecurityCode() == null || messageModel.getSecurityCode().isEmpty()){</span>
+<span class="nc" id="L39">            throw new RuntimeException(&quot;Invalid security code&quot;);</span>
+        }
+<span class="nc" id="L41">    }</span>
+
+    public void validateCancelModel (CancelModel cancelModel){
+<span class="nc bnc" id="L44" title="All 4 branches missed.">        if(cancelModel.getPhoneNumber() == null || cancelModel.getPhoneNumber().isEmpty()){</span>
+<span class="nc" id="L45">            throw new RuntimeException(&quot;Invalid phone number&quot;);</span>
+        }
+<span class="nc" id="L47">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
