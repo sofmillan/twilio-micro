@@ -46,6 +46,22 @@ jobs:
         run: chmod +x ./gradlew
       - name: run all tests
         run: ./gradlew testClasses
+      - name: Build and analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew build sonarqube --info
+
+  deploy-ecr:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@ccb4328a959376b642e027874838f60f8e596de3
       - name: Build with Gradle
@@ -56,22 +72,6 @@ jobs:
         with:
           name: Package
           path: build/libs
-      - name: Build and analyze
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew build sonarqube --info
-      - name: create .jar and install
-        run: ./gradlew bootJar
-
-  deploy-ecr:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
