@@ -16,6 +16,8 @@ env:
   AWS_ECR_REPO_NAME: 'twilio'
   AWS_ECR_REPO_LINK: '378462941125.dkr.ecr.us-east-2.amazonaws.com/twilio'
   AWS_ECR_REPO_PATH: '378462941125.dkr.ecr.us-east-2.amazonaws.com'
+  AWS_EB_ENVIRONMENT: 'Twilio-micro-env'
+  AWS_EB_APPLICATION: 'twilio-micro'
 
 jobs:
   build:
@@ -85,5 +87,23 @@ jobs:
           aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin ${{env.AWS_ECR_REPO_PATH}}
           docker build -t ${{env.AWS_ECR_REPO_NAME}} .
           docker tag ${{env.AWS_ECR_REPO_NAME}}:latest ${{env.AWS_ECR_REPO_LINK}}:latest
-          docker push ${{env.AWS_ECR_REPO_LINK}}:latest    
+          docker push ${{env.AWS_ECR_REPO_LINK}}:latest   
+
+  deploy-eb:
+    needs: deploy-ecr
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v21
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: ${{ env.AWS_EB_APPLICATION }}
+          environment_name: ${{ env.AWS_EB_ENVIRONMENT }}
+          version_label: 'latest'
+          region: ${{ env.AWS_REGION }}
+          use_existing_version_if_available: true
 
